@@ -1,0 +1,129 @@
+﻿/* *.cshtml ***********/
+.panel-title p {
+    font-size: larger;
+    color: #808080;
+}
+
+#alertMessageDiv {
+    text-align: center;
+    width: 30%;
+    font-size: medium;
+}
+
+#btnCreateExit {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 2px;
+}
+
+/*Board/GetBoard.cshtml *********/
+#BoardDiv ul {
+    text-align: center;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    padding: 4px;
+}
+
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+/*Admin/index.cshtml ************/
+#AddUserDiv a i {
+    font-size: medium;
+    font-family: Arial;
+}
+
+#loaderDiv {
+    text-align: center;
+    display: none;
+}
+
+/*Board/GetBoard.cshtml  &&  Admin/index.cshtml ******/
+.text-warning {
+    margin-top: 7px;
+    font-size: large;
+}
+
+/*Shared ************************************************************************/
+
+/*_AdminNewUser*************/
+#addNewFormTitle {
+    text-align: center;
+    font-size: large;
+    font-family: Arial;
+    width: 40%;
+}
+
+/*_GetCards**************/
+.panel-footer {
+    padding: 5px 2px;
+}
+
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.column {
+    width: 16%;
+    float: left;
+    padding-bottom: 0px;
+    margin-right: 0px;
+}
+
+#columnTask {
+    width: 99%;
+}
+
+.portlet {
+    margin: 0.5em 0.1em 0.1em 0.2em;
+    padding: 0em;
+}
+
+.portlet-header {
+    padding: 0.1em 0.1em;
+    margin-bottom: 0em ;
+    position: relative;
+}
+
+.portlet-header1 {
+    text-align: center;
+    padding: 5px;
+    background-color: #808080;
+    text-decoration-style: double;
+    color: white;
+}
+
+.portlet-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -8px;
+}
+
+.portlet-content {
+    padding: 0em;
+}
+
+.portlet-placeholder {
+    border: 1px dotted black;
+    margin: 0 1em 1em 0;
+    height: 50px;
+}
+
+#AddNewCardDiv ul {
+    width: 8%;
+    float: left;
+    margin-top: 7px;
+}
+
+.portlet-content textarea {
+    max-width: 100%;
+    width: 100%;
+    border: hidden;
+}
+
+/* */
+

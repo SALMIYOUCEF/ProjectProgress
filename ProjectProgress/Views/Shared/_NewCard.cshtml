@@ -1,0 +1,81 @@
+﻿@model DataAccessLayer.Cards
+
+<style>
+    .btn {
+        padding: 4px 6px;
+    }
+    .form-control {
+        padding: 6px 2px;
+    }
+</style>
+
+<div style=" padding:0px">
+
+    <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv"></div>
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group" style=" margin:4px">
+                <div class="col-md-12" style=" padding:0px">
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @placeholder = "Card Name...", @class = "form-control" }} )
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-12" id="btnCreateExit">
+                        <a href="#"  class=" btn btn-success" id="btnCreate">
+                            <i class="glyphicon glyphicon-ok"></i>
+                        </a>
+                        <a href="#" class=" btn btn-default" id="btnExit">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                </div>
+            </div>
+
+            <input type="hidden" name="IdBoard" id="formBoardId" />
+        </div>
+    }
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#alertMessageDiv").hide();
+
+     var linkSuccess = '@Url.Action("GetCards", "Cards", new { boardId = -1})';
+     linkSuccess = linkSuccess.replace("-1", @ViewBag.Id);
+
+
+     var formBoardId = document.getElementById("formBoardId");
+     formBoardId.value = @ViewBag.Id;
+
+      var userId = $("#hiddenId").val();
+
+        $("#btnExit").click(function() {
+            $("#listCardDiv").load(linkSuccess);
+        });
+        $("#btnCreate").click(function() {
+            var data = $("#myForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateCard", "Cards")',
+                data: data,
+                success: function(result) {
+                    if (!result.hasError) {
+                        $("#listCardDiv").load(linkSuccess);
+
+                    } else {
+                        $("#alertMessageDiv").html(result.message);
+                        $("#alertMessageDiv").show();
+                    }
+                }
+            });
+        });
+
+
+    })
+
+</script>

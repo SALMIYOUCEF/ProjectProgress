@@ -1,0 +1,74 @@
+﻿@model List<DataAccessLayer.Board>
+@using DataAccessLayer;
+@{
+    ViewBag.Title = "GetBoards";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"> </script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"> </script>
+<link href="~/Content/ProjectProgress.css" rel="stylesheet" />
+
+<body style=" background-color: @ViewBag.Project.Color">
+    <div id="listBoardDiv">
+        <div class="panel-title">
+            <p> @ViewBag.Project.Name</p>
+        </div>
+        @if (Model.Count == 0)
+        {
+            <div class="row">
+                <div style="margin-top: 4px"id="BoardDiv">
+                    <ul class=" media-list  btn btn-primary" onclick="AddNewItem('BoardDiv', '/Board/AddBoard')" >
+                        <li><i class="glyphicon glyphicon-plus"></i></li>
+                        <li>New board</li>
+                    </ul>
+                </div>
+                <div class="text-warning">
+                    <i class="glyphicon glyphicon-exclamation-sign"></i>
+                    No board found ...
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class=" panel-title">
+                <p> List Board </p>
+            </div>
+
+            <div class="row">
+                <div id="BoardDiv">
+                    <ul class="media-list col-md-1 btn btn-primary" onclick="AddNewItem('BoardDiv', '/Board/AddBoard')">
+                        <li><i class="glyphicon glyphicon-plus"></i></li>
+                        <li>New board</li>
+                    </ul>
+             
+                    @foreach (var item in Model)
+                    {
+                        <ul class=" media-list col-md-1 btn btn-default " onclick="AddNewItem('DetailBoardDiv', '/Cards/GetCards?boardId=@item.Id' )"> @*//"DetailBoard(@item.Id)"*@
+                            <li>@item.Name</li>
+                            <li class="badge">@item.Cards.Count()</li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <input type="hidden" id="inputIdProject" value=@ViewBag.Project.Id />
+    <div id="DetailBoardDiv" class="row" />
+
+</body>
+
+@*<script>
+    var AddNewBoard = function ()
+    {
+        $("#BoardDiv").load('@Url.Action("AddBoard", "Board", new { idProject = ViewBag.Project.Id })');
+    }
+
+    var DetailBoard = function (idBoard)
+    {
+        var link = '@Url.Action("GetCards", "Cards", new { boardId = -1})';
+        link = link.replace("-1", idBoard);
+        $("#DetailBoardDiv").load(link);
+    }
+</script>*@
+<script src="~/Scripts/ProjectProgress.js"></script>

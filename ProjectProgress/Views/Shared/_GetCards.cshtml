@@ -1,0 +1,105 @@
+﻿@model List<DataAccessLayer.Cards>
+@using DataAccessLayer;
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"> </script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"> </script>
+<link href="~/Content/ProjectProgress.css" rel="stylesheet" />
+<head>
+    <script>
+  $( function() {
+    $( ".column" ).sortable({
+      connectWith: ".column",
+      handle: ".portlet-header",
+      cancel: ".portlet-toggle",
+      placeholder: "portlet-placeholder ui-corner-all"
+    });
+
+    $( ".portlet" )
+      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-triangle-1-n portlet-toggle'></span>");
+
+    $( ".portlet-toggle" ).on( "click", function() {
+      var icon = $( this );
+      icon.toggleClass( "  ui-icon-triangle-1-n ui-icon-triangle-1-s " );
+      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+    });
+  } );
+    </script>
+</head>
+
+<body>
+    <div id="listCardDiv">
+        <div class=" panel-title">
+            <p> @ViewBag.Board.Name : list Card </p>
+        </div>
+
+        <input type="hidden" id="inputIdBoard" value=@ViewBag.Board.Id />
+
+        <div class="row">
+            <div id="AddNewCardDiv">
+                <ul class="media-list  btn btn-primary " onclick="AddNewItem('AddNewCardDiv', '/Cards/CreateCard?BoardId=@ViewBag.Board.Id')">
+                    <li><i class="glyphicon glyphicon-plus"></i></li>
+                    <li>New Card</li>
+                </ul>
+            </div>
+            <div>
+
+                @foreach (var card in Model)
+                {
+                    <div style="width: 16%; float: left">
+                        <div class="portlet">
+                            <div class="portlet-header portlet-header1 ">@card.Title</div>
+                            <div class="portlet-content">
+                                <div class="column" id="columnTask">
+                                    @foreach (var task in card.Tasks)
+                                    {
+                                        <div class="portlet">
+                                            <div class="portlet-header">@task.Title</div>
+                                            <div class="portlet-content">
+                                                <textarea> @task.Description</textarea>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div id="AddNewTaskDiv-@card.Id" class="panel-footer" style="width:100%">
+                                        <button class="btn btn-success" style="width: 100%" onclick="AddNewItem('AddNewTaskDiv-@card.Id', '/Tasks/AddTask?idCard=@card.Id')"> + New task</button>  @*AddNewTask(@card.Id)*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+</body>
+
+@*<script>
+    var AddNewCard= function ()
+    {
+     $("#AddNewCardDiv").load('@Url.Action("CreateCard", "Cards", new { BoardId = @ViewBag.Board.Id })');
+    }
+     var AddNewTask= function (cardId)
+    {
+    var link = '@Url.Action("AddTask", "Tasks", new { idCard = -1})';
+     link = link.replace("-1", cardId);
+    var panelId = cardId;
+     $("#AddNewTaskDiv-"+panelId).load(link);
+    }
+</script>*@
+
+<script src="~/Scripts/ProjectProgress.js"></script>
+
+
+
+
+
+
+
+
+
+

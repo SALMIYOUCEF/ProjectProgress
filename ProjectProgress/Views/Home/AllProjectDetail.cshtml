@@ -1,0 +1,150 @@
+﻿@model IEnumerable<ProjectProgress.Models.ProjectDetails>
+
+@{
+    ViewBag.Title = "AllProject";
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Sortable - Default functionality</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"> </script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"> </script>
+
+    <style>
+        #sortable {
+            /*list-style-type: none;*/
+            margin: 10px 0 0 0;
+            padding: 0;
+            width: 100%;
+        }
+
+            #sortable li {
+                background-color: white;
+                margin: 0px 3px 3px 3px;
+                height: 45px; /*37px;*/
+            }
+
+                #sortable li span {
+                    height: 42px;
+                    display: inline-flex;
+                    align-items: center;      
+                    border-right-style: double;
+                    border-color: white;
+                }
+        
+        .btn {
+            /*margin-top: -4px;*/
+            padding: 5px;
+            margin-right: 3px;
+        }
+
+        #titleSpan {
+            background-color: white;
+            z-index: 3;
+            padding-top: 6px;
+            height: 53px;
+        }
+
+            #titleSpan ul li span {
+                border-style: groove;
+                font-weight: bold;
+                height: 50px;
+                display: inline-flex;
+                align-items: center;
+            }
+
+        .fixed {
+            position: fixed;
+            top: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div>
+        <div id="titleSpan">
+            <ul class="media-list">
+                <li style="padding-left: 2px; display: block">
+                    <span class="col-md-2">Project</span>
+                    <span class="col-md-2">Board</span>
+                    <span class="col-md-2">Card</span>
+                    <span class="col-md-2">Task</span>
+                    <span class="col-md-4">Description task</span>
+                </li>
+            </ul>
+        </div>
+        @if (Model != null)
+        {
+            <div>
+                <ul id="sortable" class="media-list">
+                    @foreach (var item in Model)
+                    {
+                        <li class="ui-state-default" style="background-color: @item.ProjectColor">
+                            <span class="col-md-2">
+                                <i class="glyphicon glyphicon-resize-vertical"></i>
+                                <i class="btn btn-default glyphicon glyphicon-search "></i>
+                                @item.ProjectName
+                            </span>
+                            <span class="col-md-2"> @item.BoardName</span>
+                            <span class="col-md-2"> @item.CardName</span>
+                            <span class="col-md-2"> @item.TaskName</span>
+                            <span class="col-md-4"> @item.TaskDescription</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p>No project Found... </p>
+        }
+
+    </div>
+</body>
+
+<script>
+    $(function() {
+
+     var scrollY = function() {
+        var supportPageOffset = window.pageXOffset !== undefined;
+        var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
+        return supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+    }
+
+        var element = document.querySelector('#titleSpan');
+        var rect = element.getBoundingClientRect();
+        var top = rect.top + scrollY();
+        var width = rect.width;
+      
+     // functions
+        var onScroll = function() {
+            var hasScrollClass = element.classList.contains('fixed');
+                  if (scrollY() > top && !hasScrollClass) {
+                      element.classList.add('fixed');
+                      element.style.width = width+ "px";
+                  } else if(scrollY() < top && hasScrollClass){
+                        element.classList.remove('fixed');
+                  }
+        }
+
+    var onResize = function() {
+         element.style.width = "auto";
+         element.classList.remove('fixed');
+         rect = element.getBoundingClientRect();
+         top = rect.top + scrollY();
+         width = rect.width;
+         onScroll();
+     }
+     // listener
+            window.addEventListener('scroll',onScroll);
+            window.addEventListener('resize',onResize);
+    });
+
+    $( function() {
+        $( "#sortable" ).sortable();
+        $( "#sortable" ).disableSelection();
+    } );
+</script>

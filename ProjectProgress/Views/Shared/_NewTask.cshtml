@@ -1,0 +1,90 @@
+﻿@model DataAccessLayer.Task
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"> </script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"> </script>
+
+<style>
+    textarea {
+        width: 100%;
+    }
+</style>
+<div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv" style="text-align:center;font-size:medium; width:80%"></div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @* @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })*@
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @placeholder = "Task Name ...", @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @*@Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })*@
+            <div class="col-md-12">
+                @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @placeholder = "Task Description ..." , @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+       <input type="hidden" name="IdCard" id="formBoardId" value="@ViewBag.Id" />
+
+        <div class="form-group">
+            <div class="col-md-12">
+                @*<input type="button" value="New Task" class="btn btn-success" id="btnCreate" style="width:65%"/>*@
+                <a href="#" class="btn btn-success" id="btnCreate" style="width:30%">
+                    <i class=" glyphicon glyphicon-ok"></i>
+                </a>
+                <a href="#" class="btn btn-default" id="btnExit" style="width:30%">
+                    <i class="glyphicon glyphicon-remove" ></i>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $("#alertMessageDiv").hide();
+
+
+     var linkSuccess = '@Url.Action("GetCards", "Cards", new { boardId = -1})';
+     linkSuccess = linkSuccess.replace("-1", @ViewBag.IdBoard);
+
+      $("#btnExit").click(function () {
+        location.href = linkSuccess;
+     })
+     var userId = $("#hiddenId").val();
+        $("#btnCreate").click(function () {
+            var data = $("#myForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddTask", "Tasks")',
+                data: data,
+                success: function (result) {
+                                               if(!result.hasError)
+                                               {
+                                                    $("#listCardDiv").load(linkSuccess);
+                                               }
+                                              else
+                                              {
+                                                  $("#alertMessageDiv").html(result.message);
+                                                  $("#alertMessageDiv").show();
+                                              }
+                                           }
+                 })
+    //.done(function(partialViewResult) {
+      //          $("#listCardDiv").load(linkSuccess); });
+             })
+
+    })
+
+</script>

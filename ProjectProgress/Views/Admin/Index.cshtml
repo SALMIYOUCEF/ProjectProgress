@@ -1,0 +1,111 @@
+﻿@model Dictionary<string, List<ApplicationUser>>
+@using Microsoft.AspNet.Identity.EntityFramework;
+@using ProjectProgress.Models;
+
+@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/ProjectProgress.css" rel="stylesheet" />
+
+<h2>Admin</h2>
+<br />
+
+<div>
+    <div id="AddUserDiv">
+        <a href="#" class="btn btn-info" onclick="AddNewUser()">
+            <i class="glyphicon glyphicon-plus" > User</i>
+        </a>
+    </div>
+
+    <br />
+
+    <table class="table table-responsive">
+
+        <tbody>
+            @foreach (KeyValuePair<string, List<ApplicationUser>> item in this.Model)
+            {
+                <tr>
+                    <th>@item.Key</th>
+                    <th></th>
+                </tr>
+
+                foreach (var it in item.Value)
+                {
+                    <tr id="row_@it.Id">
+                        <td>
+                            @Html.DisplayFor(modelItem => it.UserName) <br />
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-danger" onclick="ConfirmDelete('@it.Id');">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+
+    </table>
+
+</div>
+
+<input type="hidden" id="hiddenEmployeeId" />
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title">Delete User</h3>
+            </div>
+
+            <div class="modal-body">
+                <h4>Are you sure ? You want to delete this. </h4>
+
+                <div id="loaderDiv">
+                    <img src="~/Content/Loading.gif" width="150" />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                <a href="#" class="btn btn-success" onclick="DeleteUser()">Confirm</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var ConfirmDelete = function (Id) {
+         $("#hiddenEmployeeId").val(Id);
+        $("#myModal").modal('show');
+    }
+
+    var DeleteUser = function () {
+        $("#loaderDiv").show();
+        var userId = $("#hiddenEmployeeId").val();
+        var data = JSON.stringify({ 'id': userId });
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteUser", "Admin")',
+            data: { 'id': userId },
+            success: function (result) {
+                $("#loaderDiv").hide();
+                $("#myModal").modal("hide");
+                $("#row_" + userId).remove();
+            }
+        })
+    }
+
+    var AddNewUser = function () {
+    $("#AddUserDiv").load('@Url.Action("RegisterAdmin", "Admin")');
+    }
+
+</script>

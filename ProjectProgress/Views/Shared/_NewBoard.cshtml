@@ -1,0 +1,73 @@
+﻿@model DataAccessLayer.Board
+
+<link href="~/Content/ProjectProgress.css" rel="stylesheet" />
+
+<div>
+    <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv"></div>
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+            {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <div class="col-md-12" style=" padding:0px">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @placeholder = "Board Name...", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-12" id="btnCreateExit">
+                    <a href="#" class=" btn btn-success" id="btnCreate">
+                        <i class="glyphicon glyphicon-ok"></i>
+                    </a>
+                    <a href="#" class=" btn btn-default" id="btnExit">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </a>
+                </div>
+            </div>
+            <input type="hidden" name="ProjectId" id="formProjectId" />
+        </div>
+    }
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#alertMessageDiv").hide();
+
+var inputIdProject = document.getElementById("inputIdProject").value;
+  var idProject = inputIdProject;
+     var linkSuccess = '@Url.Action("GetBoards", "Board", new { idProject = -1})';
+     linkSuccess = linkSuccess.replace("-1", idProject);
+
+
+    var formProjectId = document.getElementById("formProjectId");
+    formProjectId.value = idProject;
+
+        $("#btnExit").click(function() {
+           location.href = linkSuccess; // a changer : # rechargement de toute la page (ça clignote :/) #
+           //$("#listBoardDiv").load(linkSuccess);
+        });
+
+        $("#btnCreate").click(function() {
+            var data = $("#myForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddBoard", "Board")',
+                data: data,
+                success: function(result) {
+                    if (!result.hasError) {
+                        location.href = linkSuccess;
+                    } else {
+                        $("#alertMessageDiv").html(result.message);
+                        $("#alertMessageDiv").show();
+                    }
+                }
+            });
+        });
+    })
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
