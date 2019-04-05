@@ -12,21 +12,16 @@ namespace DataAccessLayer
     using System;
     using System.Collections.Generic;
     
-    public partial class Task
+    public partial class Event
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Task()
-        {
-            this.Event = new HashSet<Event>();
-        }
-    
         public int Id { get; set; }
-        public string Title { get; set; }
+        public int TaskId { get; set; }
+        public Nullable<System.DateTime> DteStart { get; set; }
+        public Nullable<System.DateTime> DteEnd { get; set; }
         public string Description { get; set; }
-        public int IdCard { get; set; }
+        public string Title { get; set; }
+        public string Color { get; set; }
     
-        public virtual Cards Card { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Event { get; set; }
+        public virtual Task Task { get; set; }
     }
 }

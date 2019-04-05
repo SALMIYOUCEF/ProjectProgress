@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataAccessLayer
+namespace WebApi.Models
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace DataAccessLayer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Task()
         {
-            this.Event = new HashSet<Event>();
+            this.Events = new HashSet<Events>();
         }
     
         public int Id { get; set; }
@@ -25,8 +25,8 @@ namespace DataAccessLayer
         public string Description { get; set; }
         public int IdCard { get; set; }
     
-        public virtual Cards Card { get; set; }
+        public virtual Cards Cards { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Event { get; set; }
+        public virtual ICollection<Events> Events { get; set; }
     }
 }

@@ -7,26 +7,23 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataAccessLayer
+namespace WebApi.Models
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Task
+    public partial class AspNetRoles
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Task()
+        public AspNetRoles()
         {
-            this.Event = new HashSet<Event>();
+            this.AspNetUsers = new HashSet<AspNetUsers>();
         }
     
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int IdCard { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     
-        public virtual Cards Card { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Event { get; set; }
+        public virtual ICollection<AspNetUsers> AspNetUsers { get; set; }
     }
 }

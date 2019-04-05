@@ -195,15 +195,18 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BoardController.cs" />
     <Compile Include="Controllers\CardsController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="GlobalVariables.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BoardCustomizeModel.cs" />
     <Compile Include="Models\CardsCustomizeModel.cs" />
+    <Compile Include="Models\EventsCustomizeModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ProjectDetails.cs" />
@@ -214,6 +217,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\fullcalendar.min.css" />
+    <Content Include="Content\fullcalendar.print.min.css" />
     <Content Include="Content\Loading.gif" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -226,6 +231,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Image\icons8-effacer.png" />
+    <Content Include="Scripts\allProjectDetailScript.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -234,6 +240,8 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\colorpalettepicker.js" />
     <Content Include="Scripts\colorPick.js" />
+    <Content Include="Scripts\fullcalendar.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\MenuScript.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -243,6 +251,10 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\palette-color-picker.js" />
     <Content Include="Scripts\ProjectProgress.js" />
     <Content Include="Scripts\respond.js" />
@@ -261,7 +273,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
@@ -293,11 +304,14 @@
     <Content Include="Views\Shared\_NewTask.cshtml" />
     <Content Include="Views\Shared\_GetCards.cshtml" />
     <Content Include="Views\Home\AllProjectDetail.cshtml" />
+    <Content Include="Views\Home\Calender.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Cards\" />
     <Folder Include="Views\Default\" />
+    <Folder Include="Views\Events\" />
+    <Folder Include="Views\Event\" />
     <Folder Include="Views\Tasks\" />
   </ItemGroup>
   <ItemGroup>
@@ -310,7 +324,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>

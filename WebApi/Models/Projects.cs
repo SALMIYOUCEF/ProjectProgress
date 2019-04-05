@@ -7,26 +7,26 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataAccessLayer
+namespace WebApi.Models
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Task
+    public partial class Projects
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Task()
+        public Projects()
         {
-            this.Event = new HashSet<Event>();
+            this.Board = new HashSet<Board>();
         }
     
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int IdCard { get; set; }
+        public string Name { get; set; }
+        public System.DateTime DteConsult { get; set; }
+        public string Color { get; set; }
+        public string UserId { get; set; }
     
-        public virtual Cards Card { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Event { get; set; }
+        public virtual ICollection<Board> Board { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace ProjectProgress.Models
             }
             catch (Exception ex)
             {
-                return "Invalid data : " + ex.InnerException.Message;
+                return "Invalid data : " + ex.Message;
             }
             return res;
         }

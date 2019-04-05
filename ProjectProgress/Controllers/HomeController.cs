@@ -3,9 +3,16 @@ using ProjectProgress.Models;
 using ProjectProgress.Sql;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ProjectProgress.Controllers
 {
@@ -42,8 +49,9 @@ namespace ProjectProgress.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult AllProjectDetail()
+        public ActionResult AllProjectDetail(string searchString=null)
         {
+            ViewData["CurrentFilter"] = searchString;
             var projectDetail = new List<ProjectDetails> ();
             var projectUser = new ProjectCustomizeModel().GetAll().Where(p => p.UserId == UserId);
             foreach (var pr in projectUser.ToList())
@@ -65,6 +73,10 @@ namespace ProjectProgress.Controllers
                         }
                     }
                 }
+            }
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                projectDetail = projectDetail.Where(p => p.ProjectName.ToLower().Contains(searchString.ToLower())  ).ToList();
             }
 
             return View(projectDetail);
@@ -122,8 +134,31 @@ namespace ProjectProgress.Controllers
         /// <returns></returns>
         public ActionResult Calender()
         {
-            return View();
-        }
+            //IEnumerable<EventsCustomizeModel> eventList = Enumerable.Empty<EventsCustomizeModel>();
+            //HttpResponseMessage response = GlobalVariables.webApiClient.GetAsync("Events").Result;
+            //var xx = response.Content.ReadAsStringAsync().Result;
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    eventList = JsonConvert.DeserializeObject<IEnumerable<EventsCustomizeModel>>(xx);
+            //}
 
+             var eventList = new ProgressProjectsEntities().Events.ToList();
+             var test = new List<Event>();
+             foreach (var item in eventList)
+             {
+                 var cc = new Event()
+                 {
+                     Id = item.Id,
+                     Color = item.Color != null ? item.Color : item.Task.Card.Board.Project.Color ,
+                     Description = item.Description,
+                     Title = item.Title,
+                     DteEnd = item.DteEnd,
+                     DteStart = item.DteStart,
+                     TaskId = item.TaskId,
+                 };
+                 test.Add(cc);
+             }
+            return View(test);
+        }
     }
 }

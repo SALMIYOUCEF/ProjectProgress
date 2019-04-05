@@ -21,9 +21,11 @@
         <AssociationConnector Association="ProgressProjectsModel.FK_Cards_Board1" />
         <AssociationConnector Association="ProgressProjectsModel.FK_Task_Cards" ManuallyRouted="true" >
           <ConnectorPoint PointX="6.90625" PointY="2.8552864583333331" />
-          <ConnectorPoint PointX="6.90625" PointY="8.7278857421875" />
-          <ConnectorPoint PointX="7.375" PointY="8.7278857421875" />
+          <ConnectorPoint PointX="6.90625" PointY="8.8240364583333317" />
+          <ConnectorPoint PointX="7.375" PointY="8.8240364583333317" />
         </AssociationConnector>
+        <EntityTypeShape EntityType="ProgressProjectsModel.Event" Width="1.5" PointX="9.625" PointY="6.75" />
+        <AssociationConnector Association="ProgressProjectsModel.FK_Events_Task" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

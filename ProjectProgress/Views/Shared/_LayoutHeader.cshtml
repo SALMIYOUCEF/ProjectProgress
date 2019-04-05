@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNet.Identity
-@if (Request.IsAuthenticated)
-{
+﻿@*@using Microsoft.AspNet.Identity
+    @if (Request.IsAuthenticated)
+    {*@
         <div class="navbar-header">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                 <i class="glyphicon glyphicon-home"></i>
@@ -19,8 +19,8 @@
             }
         </div>
   
-}
+@*}
 else
 {
 
-}
+}*@
