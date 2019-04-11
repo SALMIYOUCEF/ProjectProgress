@@ -33,8 +33,90 @@
             max-width: none;
         }
     </style>
+</head>
 
-    <script>
+<body>
+
+<div id='calendar'></div>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title"><span id="eventTitle"></span></h3>
+            </div>
+            <div class="modal-body">
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+
+                <button class="btn btn-default pull-right" data-dismiss="modal">
+                    Cancel
+                </button>
+                <button id="btnDelete" class="btn btn-danger pull-right" style="margin-right: 5px;">
+                    <span class="glyphicon glyphicon-remove"> Remove </span>
+                </button>
+                <button id="btnEdit" class="btn btn-info pull-right" style="margin-right: 5px;">
+                    <span class="glyphicon glyphicon-pencil"> Edit</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModalSave">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title">Save Event</h3>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" vlaue="0" id="EventId" />
+                    <input type="hidden" vlaue="0" id="TaskId" />
+                       
+                    <div class="form-group col-md-12">
+                        <label>Subject</label>
+                        <input type="text" id="txtSubject" class="form-control" style="max-width: none"  />
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label>start</label>
+                        <div id="dtp1" class="input-group date">
+                            <input type="text" id="txtStart" class="form-control" style="max-width: none" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar" ></span>
+                            </span>
+                        </div>
+                    </div>
+                        
+                    <div class="form-group col-md-12" >
+                        <label>End</label>
+                        <div id="dtp2" class="input-group date">
+                            <input type="text" id="txtEnd" class="form-control" style="max-width: none"  />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar" ></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label class="col-md-12">Description</label>
+                        <textarea class="col-md-12" id="txtDescription" style="max-width: none" ></textarea>
+                    </div>
+                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                    <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+    
+
+<script>
         $(document).ready(function() {
             $('#calendar').function
             {
@@ -130,7 +212,6 @@
                         DteStart: $('#txtStart').val(),
                         DteEnd: $('#txtEnd').val().trim(),
                         Description: $('#txtDescription').val().trim()
-
                 }
                 SaveEvent(data);
             });
@@ -179,83 +260,4 @@
 
         });
 
-    </script>
-
-</head>
-<body>
-
-    <div id='calendar'></div>
-
-    <div class="modal fade" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <a href="#" class="close" data-dismiss="modal">&times;</a>
-                    <h3 class="modal-title"><span id="eventTitle"></span></h3>
-                </div>
-                <div class="modal-body">
-                    <p id="pDetails"></p>
-                </div>
-                <div class="modal-footer">
-
-                    <button class="btn btn-default pull-right" data-dismiss="modal">
-                        Cancel
-                    </button>
-                    <button id="btnDelete" class="btn btn-danger pull-right" style="margin-right: 5px;">
-                        <span class="glyphicon glyphicon-remove"> Remove </span>
-                    </button>
-                    <button id="btnEdit" class="btn btn-info pull-right" style="margin-right: 5px;">
-                        <span class="glyphicon glyphicon-pencil"> Edit</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="myModalSave">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <a href="#" class="close" data-dismiss="modal">&times;</a>
-                    <h3 class="modal-title">Save Event</h3>
-                </div>
-                <div class="modal-body">
-                    <form class="col-md-12 form-horizontal">
-                        <input type="hidden" vlaue="0" id="EventId" />
-                        <input type="hidden" vlaue="0" id="TaskId" />
-                       
-                        <div class="form-group col-md-12">
-                            <label>Subject</label>
-                            <input type="text" id="txtSubject" class="form-control" style="max-width: none"  />
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <label>start</label>
-                            <div id="dtp1" class="input-group date">
-                                <input type="text" id="txtStart" class="form-control" style="max-width: none" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar" ></span>
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group col-md-12" >
-                            <label>End</label>
-                            <div id="dtp2" class="input-group date">
-                                <input type="text" id="txtEnd" class="form-control" style="max-width: none"  />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar" ></span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label class="col-md-12">Description</label>
-                            <textarea class="col-md-12" id="txtDescription" style="max-width: none" ></textarea>
-                        </div>
-                        <button type="button" id="btnSave" class="btn btn-success">Save</button>
-                        <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+</script>

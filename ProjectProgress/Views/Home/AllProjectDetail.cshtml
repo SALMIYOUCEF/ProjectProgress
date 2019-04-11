@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ProjectProgress.Models.ProjectDetails>
+﻿@using Microsoft.VisualStudio.Shell
+@model IEnumerable<ProjectProgress.Models.ProjectDetails>
 
 @{
     ViewBag.Title = "AllProject";
@@ -55,39 +56,37 @@
 </head>
 
 <body>
-
-
-<div id="filterTable">
-    <form  method="get">
-        <div >
-            <p>
-                <input type="text" name="SearchString" placeholder="Search by project name" value="@ViewData["currentFilter"]" />
-                <input type="submit" value="Search" class="btn btn-info" style=" padding-top: 3px; padding-bottom: 3px;" /> 
-            </p>
-        </div>
-    </form>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>
-                <a>@Html.DisplayNameFor(model => model.ProjectName)</a>
-            </th>
-            <th>
-                <a>@Html.DisplayNameFor(model => model.BoardName)</a>
-            </th>
-            <th>
-                <a>@Html.DisplayNameFor(model => model.CardName)</a>
-            </th>
-            <th>
-                <a>@Html.DisplayNameFor(model => model.TaskName)</a>
-            </th>
-            <th>
-                <a>@Html.DisplayNameFor(model => model.TaskDescription)</a>
-            </th>
-        </tr>
-        </thead>
-    </table>
-</div>
+    <div id="filterTable">
+        <form method="get">
+            <div>
+                <p>
+                    <input type="text" name="SearchString" placeholder="Search by project name" value="@ViewData["currentFilter"]" />
+                    <input type="submit" value="Search" class="btn btn-info" style=" padding-top: 3px; padding-bottom: 3px;" />
+                </p>
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        <a>@Html.DisplayNameFor(model => model.ProjectName)</a>
+                    </th>
+                    <th>
+                        <a>@Html.DisplayNameFor(model => model.BoardName)</a>
+                    </th>
+                    <th>
+                        <a>@Html.DisplayNameFor(model => model.CardName)</a>
+                    </th>
+                    <th>
+                        <a>@Html.DisplayNameFor(model => model.TaskName)</a>
+                    </th>
+                    <th>
+                        <a>@Html.DisplayNameFor(model => model.TaskDescription)</a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 
     @if (Model != null)
     {
@@ -98,7 +97,7 @@
                     <li class="ui-state-default" style="background-color: @item.ProjectColor">
                         <span class="col-md-2">
                             <i class="glyphicon glyphicon-resize-vertical"></i>
-                            <i class="btn btn-default glyphicon glyphicon-search "></i>
+                            <i class="btn btn-default glyphicon glyphicon-search" onclick="ShowTask(@item.TaskId)"></i>
                             @item.ProjectName
                         </span>
                         <span class="col-md-2"> @item.BoardName</span>
@@ -115,6 +114,145 @@
         <p>No project Found... </p>
     }
 
-</body>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title">Update Task</h3>
+            </div>
+            <div class="modal-body">
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default pull-right" data-dismiss="modal">
+                    Cancel
+                </button>
+                <button id="btnDelete" class="btn btn-danger pull-right" style="margin-right: 5px;">
+                    <span class="glyphicon glyphicon-remove"> Remove </span>
+                </button>
+                <button id="btnEdit" class="btn btn-info pull-right" style="margin-right: 5px;">
+                    <span class="glyphicon glyphicon-pencil"> Edit</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+
+    <div class="modal fade" id="myModalSave">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h3 class="modal-title">Save Task</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="col-md-12 form-horizontal">
+                        <input type="hidden" vlaue="0" id="TaskId" />
+                        <input type="hidden" vlaue="0" id="CardId" />
+
+                        <div class="form-group col-md-12">
+                            <label>Title</label>
+                            <input type="text" id="txtTitle" class="form-control" style="max-width: none" />
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label class="col-md-12">Description</label>
+                            <textarea class="col-md-12" id="txtDescription" style="max-width: none"></textarea>
+                        </div>
+
+                        <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                        <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var selectedItem = null;
+    function ShowTask(taskId) {
+        var item = $.grep(@Html.Raw(Json.Encode(Model)), function(obj) {
+            return obj.TaskId === taskId;
+        });
+        selectedItem = item[0];
+        var $description = $('<div/>');
+        $description.append($('<p/>').html('<b>Project Name : </b>' + item[0].ProjectName));
+        $description.append($('<p/>').html('<b>Board Name : </b>' + item[0].BoardName));
+        $description.append($('<p/>').html('<b>Card Name : </b>' + item[0].CardName));
+        $description.append($('<p/>').html('<b>Task Name : </b>' + item[0].TaskName));
+        $description.append($('<p/>').html('<b>Card Name : </b>' + item[0].CardName));
+        $description.append($('<p/>').html('<b>Card Description : </b>' + item[0].TaskDescription));
+        $('#myModal #pDetails').empty().html($description);
+        $('#myModal').modal();
+    }
+
+    $('#btnDelete').click(function(){
+       $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "Tasks")',
+            data: {'id': selectedItem.TaskId},
+            success: function(data) {
+            if (data.status) {
+                location.href = '@Url.Action("AllProjectDetail", "Home")';
+                //$(".body").load('Url.Action("AllProjectDetail", "Home")');
+                $('#myModal').modal('hide');
+            }
+           },
+           error: function (){
+             alert('failed remove');
+           }
+      });
+    });
+
+    $('#btnEdit').click(function() {
+        oppenAndEditForm();
+    });
+
+    function oppenAndEditForm() {
+        if (selectedItem != null) {
+            $('#TaskId').val(selectedItem.TaskId);
+            $('#CardId').val(selectedItem.CardId);
+            $('#txtTitle').val(selectedItem.TaskName);
+            $('#txtDescription').val(selectedItem.TaskDescription);
+        }
+        $('#myModal').modal('hide');
+        $('#myModalSave').modal();
+    }
+
+    $('#btnSave').click(function() {
+        if ($('#txtTitle').val().trim() == "") {
+            alert("subject required");
+            return;
+        }
+        var data = {
+            Id: $('#TaskId').val(),
+            IdCard: $('#CardId').val(),
+            Title: $('#txtTitle').val().trim(),
+            Description: $('#txtDescription').val()
+
+        }
+        SaveEvent(data);
+    });
+
+    function SaveEvent(data) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Edit", "Tasks")',
+            data: data,
+            success: function(data) {
+                if (data.status) {
+                    location.href = '@Url.Action("AllProjectDetail", "Home")';
+                    //$(".body").load('Url.Action("AllProjectDetail", "Home")');
+                    $('#myModalSave').modal('hide');
+                }
+            },
+            error: function (){
+                alert('failed remove');
+            }
+        });
+    }
+
+</script>
 <script src="~/Scripts/allProjectDetailScript.js"></script>

@@ -5,48 +5,47 @@
     <script src="~/Scripts/colorpalettepicker.js"></script>
 </header>
 
-<div>
-   
-    <div  class="alert-info" id="addNewFormTitle">
-        <p>New Project</p>
-    </div>
+<div class="panel">
+        <div class=" panel-title alert-info" id="addNewFormTitle">
+            <p>New Project</p>
+        </div>
 
-    <div class="panel-body">
+        <div class="panel-body">
 
-        <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv"></div>
+            <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv"></div>
 
-        @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
         {
-            @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
 
-            <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-1" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input class="hidden" name="Color" id="ColorProject" value="testValue" />
+                        <div class="col-sm-offset-1" style="padding:0px 15px" id="colorpalettediv"></div>
+                    </div>
+
+                    @Html.HiddenFor(model => model.DteConsult, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                    <div class="form-group">
+                        <div class="col-md-offset-1 col-md-2">
+                            <input type="button" value="Create" class="btn btn-block btn-primary" id="btnCreate" />
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <input class="hidden" name="Color" id="ColorProject" value="testValue" />
-                    <div class="col-sm-offset-2" style="padding:0px 15px" id="colorpalettediv"></div>
-                </div>
-
-                @Html.HiddenFor(model => model.DteConsult, htmlAttributes: new { @class = "control-label col-md-2" })
-                @Html.HiddenFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
-
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-2">
-                        <input type="button" value="Create" class="btn btn-block btn-primary" id="btnCreate" />
-                    </div>
-                </div>
-            </div>
         }
 
-    </div>
+        </div>
 </div>
 
 <script src="~/Scripts/_newProjectScript.js"></script>

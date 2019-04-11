@@ -1,18 +1,9 @@
 ﻿using DataAccessLayer;
 using ProjectProgress.Models;
-using ProjectProgress.Sql;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Net.Http;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace ProjectProgress.Controllers
 {
@@ -69,6 +60,8 @@ namespace ProjectProgress.Controllers
                             prDetail.CardName = ca.Title;
                             prDetail.TaskName = task.Title;
                             prDetail.TaskDescription = task.Description;
+                            prDetail.TaskId = task.Id;
+                            prDetail.CardId = ca.Id;
                             projectDetail.Add(prDetail);
                         }
                     }

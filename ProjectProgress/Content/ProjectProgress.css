@@ -88,8 +88,8 @@
     position: relative;
 }
 
-.portlet-header1 {
-    text-align: center;
+.portlet-Title {
+    min-height: 35px;
     padding: 5px;
     background-color: #808080;
     text-decoration-style: double;

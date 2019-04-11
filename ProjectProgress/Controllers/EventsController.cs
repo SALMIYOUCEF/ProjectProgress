@@ -36,52 +36,24 @@ namespace ProjectProgress.Controllers
             return View(@event);
         }
 
-        // GET: Events/Create
-        public ActionResult Create()
-        {
-            ViewBag.TaskId = new SelectList(db.Tasks, "Id", "Title");
-            return View();
-        }
-
-        // POST: Events/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TaskId,DteStart,DteEnd,Description,Title,Color")] Event @event)
+        public JsonResult Create(Event @event)
         {
+            var status = false;
+
             if (ModelState.IsValid)
             {
                 db.Events.Add(@event);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                status = true;
             }
 
-            ViewBag.TaskId = new SelectList(db.Tasks, "Id", "Title", @event.TaskId);
-            return View(@event);
+            return new JsonResult { Data = new { status = status } };
         }
 
-        // GET: Events/Edit/5
-        //public ActionResult Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Event @event = db.Events.Find(id);
-        //    if (@event == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewBag.TaskId = new SelectList(db.Tasks, "Id", "Title", @event.TaskId);
-        //    return View(@event);
-        //}
 
         // POST: Events/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public JsonResult Edit( Event @event)
         {
             var status = false;
@@ -98,21 +70,7 @@ namespace ProjectProgress.Controllers
             
         }
 
-        // GET: Events/Delete/5
-        //public ActionResult Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Event @event = db.Events.Find(id);
-        //    if (@event == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(@event);
-        //}
-
+        
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
