@@ -12,6 +12,8 @@ namespace DataAccessLayer
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class ProgressProjectsEntities : DbContext
     {
@@ -35,5 +37,10 @@ namespace DataAccessLayer
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
         public virtual DbSet<Event> Events { get; set; }
+
+        public virtual ObjectResult<prGetProject_Result> prGetProject()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<prGetProject_Result>("prGetProject");
+        }
     }
 }

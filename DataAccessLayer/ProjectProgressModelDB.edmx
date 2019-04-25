@@ -89,10 +89,11 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TaskId" Type="int" Nullable="false" />
           <Property Name="Title" Type="nchar" MaxLength="20" />
-          <Property Name="DteStart" Type="date" />
-          <Property Name="DteEnd" Type="date" />
+          <Property Name="DteStart" Type="datetime" />
+          <Property Name="DteEnd" Type="datetime" />
           <Property Name="Description" Type="nchar" MaxLength="50" />
-          <Property Name="Color" Type="nchar" MaxLength="10" />
+          <Property Name="Color" Type="nchar" MaxLength="20" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="Projects">
           <Key>
@@ -102,7 +103,7 @@
           <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="DteConsult" Type="date" Nullable="false" />
           <Property Name="Color" Type="varchar" MaxLength="50" />
-          <Property Name="UserId" Type="nvarchar" MaxLength="128" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="Task">
           <Key>
@@ -217,6 +218,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="prGetProject" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="ProgressProjectsModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
@@ -275,7 +277,7 @@
           <Property Name="DteConsult" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="Boards" Relationship="ProgressProjectsModel.FK_Board_Projects" FromRole="Project" ToRole="Board" />
           <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <EntityContainer Name="ProgressProjectsEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Projects" EntityType="Self.Project" />
@@ -316,6 +318,7 @@
             <End Role="Task" EntitySet="Tasks" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
+          <FunctionImport Name="prGetProject" ReturnType="Collection(ProgressProjectsModel.prGetProject_Result)" />
         </EntityContainer>
         <EntityType Name="Board">
           <Key>
@@ -481,12 +484,13 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TaskId" Type="Int32" Nullable="false" />
-          <Property Name="DteStart" Type="DateTime" Precision="0" />
-          <Property Name="DteEnd" Type="DateTime" Precision="0" />
+          <Property Name="DteStart" Type="DateTime" Precision="3" />
+          <Property Name="DteEnd" Type="DateTime" Precision="3" />
           <Property Name="Description" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="Task" Relationship="ProgressProjectsModel.FK_Events_Task" FromRole="Event" ToRole="Task" />
           <Property Name="Title" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
-          <Property Name="Color" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Color" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Events_Task">
           <End Type="ProgressProjectsModel.Task" Role="Task" Multiplicity="1" />
@@ -500,6 +504,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="prGetProject_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="20" />
+          <Property Type="DateTime" Name="DteConsult" Nullable="false" />
+          <Property Type="String" Name="Color" Nullable="true" MaxLength="50" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -611,6 +621,7 @@
           <EntitySetMapping Name="Events">
             <EntityTypeMapping TypeName="ProgressProjectsModel.Event">
               <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Color" ColumnName="Color" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -621,6 +632,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="prGetProject" FunctionName="ProgressProjectsModel.Store.prGetProject">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProgressProjectsModel.prGetProject_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DteConsult" ColumnName="DteConsult" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

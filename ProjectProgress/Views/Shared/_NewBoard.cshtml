@@ -1,11 +1,11 @@
-﻿@model DataAccessLayer.Board
+﻿@model ProjectProgress.Models.CustomModelBoards
 
 <link href="~/Content/ProjectProgress.css" rel="stylesheet" />
 
-<div style=" padding-left: 10px">
+<div style=" padding-left: 10px; padding-top: 10px">
     <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv"></div>
 
-    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormCreateBoard" }))
             {
         @Html.AntiForgeryToken()
 
@@ -30,7 +30,8 @@
     }
 
 </div>
-
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script>
     $(document).ready(function () {
         $("#alertMessageDiv").hide();
@@ -38,22 +39,25 @@
 var inputIdProject = document.getElementById("inputIdProject").value;
   var idProject = inputIdProject;
      var linkSuccess = '@Url.Action("GetBoards", "Board", new { idProject = -1})';
-     linkSuccess = linkSuccess.replace("-1", idProject);
+        linkSuccess = linkSuccess.replace("-1", idProject);
 
 
-    var formProjectId = document.getElementById("formProjectId");
-    formProjectId.value = idProject;
+        var formProjectId = document.getElementById("formProjectId");
+        formProjectId.value = idProject;
 
         $("#btnExit").click(function() {
-           location.href = linkSuccess; // a changer : # rechargement de toute la page (ça clignote :/) #
-           //$("#listBoardDiv").load(linkSuccess);
+            location.href = linkSuccess; // a changer : # rechargement de toute la page (ça clignote :/) #
+            //$("#listBoardDiv").load(linkSuccess);
         });
 
         $("#btnCreate").click(function() {
-            var data = $("#myForm").serialize();
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddBoard", "Board")',
+            if (!$("#FormCreateBoard").valid()) {
+                return false;
+            } else {
+                var data = $("#FormCreateBoard").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddBoard", "Board")',
                 data: data,
                 success: function(result) {
                     if (!result.hasError) {
@@ -64,6 +68,7 @@ var inputIdProject = document.getElementById("inputIdProject").value;
                     }
                 }
             });
+            }
         });
     })
 </script>

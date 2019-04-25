@@ -3,6 +3,7 @@ using ProjectProgress.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace ProjectProgress.Controllers
@@ -10,6 +11,8 @@ namespace ProjectProgress.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private ProgressProjectsEntities db = new ProgressProjectsEntities();
+
         #region - property 
         private string _userId;
 
@@ -30,21 +33,57 @@ namespace ProjectProgress.Controllers
         /// return all project
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var projectUser = new ProjectCustomizeModel().GetAll().Where(p => p.UserId == UserId);
-            return View(projectUser);
+            var projectUser = db.Projects.Where(p => p.UserId == UserId);
+            var projectList = new List<CustomModelProject>();
+            foreach (var pr in projectUser)
+            {
+                var newPr = new CustomModelProject()
+                {
+                    Color = pr.Color,
+                    Id = pr.Id,
+                    Name = pr.Name,
+                    UserId = pr.UserId,
+                    DteConsult = pr.DteConsult,
+                    Boards = pr.Boards
+                };
+                projectList.Add(newPr);
+            }
+
+            var eventList = db.Events.Where(e => e.UserId == UserId);
+            var taskList = new List<ProjectDetails>();
+            foreach (var pr in projectUser.ToList())
+            {
+                foreach (var bo in pr.Boards)
+                {
+                    foreach (var ca in bo.Cards)
+                    {
+                        foreach (var task in ca.Tasks)
+                        {
+                            var taskAdd = new ProjectDetails();
+                            taskAdd.TaskId = task.Id;
+                            taskAdd.TaskName = task.Title;
+                            taskAdd.ProjectColor = pr.Color;
+                            taskList.Add(taskAdd);
+                        }
+                    }
+                }
+            }
+            ViewBag.TaskList = taskList;
+            ViewBag.EventList = eventList.ToList();
+            return await System.Threading.Tasks.Task.Run(() => View(projectList));
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult AllProjectDetail(string searchString=null)
+        public ActionResult AllProjectDetail(string searchString = null)
         {
             ViewData["CurrentFilter"] = searchString;
-            var projectDetail = new List<ProjectDetails> ();
-            var projectUser = new ProjectCustomizeModel().GetAll().Where(p => p.UserId == UserId);
+            var projectDetail = new List<ProjectDetails>();
+            var projectUser = db.Projects.Where(p => p.UserId == UserId);
             foreach (var pr in projectUser.ToList())
             {
                 foreach (var bo in pr.Boards)
@@ -69,7 +108,7 @@ namespace ProjectProgress.Controllers
             }
             if (!String.IsNullOrEmpty(searchString))
             {
-                projectDetail = projectDetail.Where(p => p.ProjectName.ToLower().Contains(searchString.ToLower())  ).ToList();
+                projectDetail = projectDetail.Where(p => p.ProjectName.ToLower().Contains(searchString.ToLower())).ToList();
             }
 
             return View(projectDetail);
@@ -85,41 +124,31 @@ namespace ProjectProgress.Controllers
             return RedirectToAction("GetBoards", "Board", new { idProject = id });
         }
 
-        /// <summary>
-        /// Create new project
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult CreateProject()
-        {
-            return PartialView("_NewProject");
-        }
-
         [HttpPost]
         /// <summary>
         /// Create new project
         /// </summary>
         /// <returns></returns>
-        public JsonResult CreateProject(Project pr)
+        public JsonResult CreateProject(CustomModelProject pr)
         {
-            string message="Data Not Valid";
             bool hasError = true;
-
             pr.UserId = this.UserId;
             pr.DteConsult = DateTime.Now;
-            if (!ModelState.IsValid)
+
+            var newProject = new Project
             {
-                var prModel = new ProjectCustomizeModel();
-                message = prModel.AddProject(pr);
-                if (message == "")
-                {
-                    hasError = false; 
-                }
-                return Json(new { message, hasError }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(new { message, hasError }, JsonRequestBehavior.AllowGet);
-            }
+                Color = pr.Color,
+                Id = pr.Id,
+                Name = pr.Name,
+                UserId = pr.UserId,
+                DteConsult = pr.DteConsult,
+                Boards = pr.Boards
+            };
+
+            db.Projects.Add(newProject);
+            db.SaveChanges();
+            hasError = false;
+            return Json(new {  hasError }, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// je dois créer un nv controller
@@ -127,31 +156,23 @@ namespace ProjectProgress.Controllers
         /// <returns></returns>
         public ActionResult Calender()
         {
-            //IEnumerable<EventsCustomizeModel> eventList = Enumerable.Empty<EventsCustomizeModel>();
-            //HttpResponseMessage response = GlobalVariables.webApiClient.GetAsync("Events").Result;
-            //var xx = response.Content.ReadAsStringAsync().Result;
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    eventList = JsonConvert.DeserializeObject<IEnumerable<EventsCustomizeModel>>(xx);
-            //}
-
-             var eventList = new ProgressProjectsEntities().Events.ToList();
-             var test = new List<Event>();
-             foreach (var item in eventList)
-             {
-                 var cc = new Event()
-                 {
-                     Id = item.Id,
-                     Color = item.Color != null ? item.Color : item.Task.Card.Board.Project.Color ,
-                     Description = item.Description,
-                     Title = item.Title,
-                     DteEnd = item.DteEnd,
-                     DteStart = item.DteStart,
-                     TaskId = item.TaskId,
-                 };
-                 test.Add(cc);
-             }
-            return View(test);
+            var events = db.Events.ToList();
+            var eventList = new List<CustomModelEvent>();
+            foreach (var item in events)
+            {
+                var newEvent = new CustomModelEvent()
+                {
+                    Id = item.Id,
+                    Color = item.Color != null ? item.Color : item.Task.Card.Board.Project.Color,
+                    Description = item.Description,
+                    Title = item.Title,
+                    DteEnd = item.DteEnd,
+                    DteStart = item.DteStart,
+                    TaskId = item.TaskId,
+                };
+                eventList.Add(newEvent);
+            }
+            return View(eventList);
         }
     }
 }

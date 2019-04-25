@@ -11,6 +11,7 @@ namespace ProjectProgress.Controllers
     [Authorize]
     public class BoardController : Controller
     {
+        private ProgressProjectsEntities db = new ProgressProjectsEntities();
         /// <summary>
         /// return all boards with the Id project equal idProject in paramater
         /// </summary>
@@ -19,10 +20,25 @@ namespace ProjectProgress.Controllers
         // GET: Borad
         public ActionResult GetBoards(int idProject)
         {
-            var project = new ProgressProjectsEntities().Projects.ToList().First(p => p.Id == idProject);
+            var project = db.Projects.ToList().First(p => p.Id == idProject);
             ViewBag.Project = project;
-            var boardList = new BoardCustomizeModel().GetAll().Where(b => b.ProjectId == idProject).ToList();
+            var boards = db.Boards.Where(b => b.ProjectId == idProject).ToList();
 
+            var boardList = new List<CustomModelBoards> ();
+            foreach (var board in boards)
+            {
+                var newBoard = new CustomModelBoards()
+                {
+                    Cards = board.Cards,
+                    Name = board.Name,
+                    Id = board.Id,
+                    Project = board.Project,
+                    ProjectId = board.ProjectId
+                };
+                boardList.Add(newBoard);
+
+            }
+           
             return View(boardList);
         }
 
@@ -34,20 +50,25 @@ namespace ProjectProgress.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddBoard(Board board)
+        public JsonResult AddBoard(CustomModelBoards board)
         {
             string message = "Data Not Valid";
             bool hasError = true;
             
             if (ModelState.IsValid)
             {
-                BoardCustomizeModel boardModel = new BoardCustomizeModel();
-                message = boardModel.AddBoard(board);
-
-                if (message == "")
+                var newBoard = new Board()
                 {
-                    hasError = false;
-                }
+                    Cards = board.Cards,
+                    Name = board.Name,
+                    Id = board.Id,
+                    Project = board.Project,
+                    ProjectId = board.ProjectId
+                };
+                db.Boards.Add(newBoard);
+                db.SaveChanges();
+                message = "";
+                hasError = false;
                 return Json(new { message, hasError }, JsonRequestBehavior.AllowGet);
             }
             else

@@ -1,0 +1,71 @@
+﻿<head>
+    <script src="~/Scripts/moment.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+        $(function() {
+            $('#startDateTimePicker').datetimepicker({
+                format: 'DD/MM/YYYY HH:mm',
+                defaultDate: $('#txtModalEventStart').val().trim()
+            });
+            $('#endDateTimePicker').datetimepicker({
+                format: 'DD/MM/YYYY HH:mm',
+                defaultDate: $('#txtModalEventEnd').val().trim()
+
+            });
+        });
+    </script>
+</head>
+
+
+<div class="modal fade" id="myModalEventSave">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title">Save Event</h3>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" vlaue="0" id="modalEventId" />
+                    <input type="hidden" vlaue="0" id="modalEventTaskId" />
+                    <input type="hidden" vlaue="0" id="modalEventUserId" />
+                    <input type="hidden" vlaue="0" id="modalEvenColor" />
+
+                    <div class="form-group col-md-12">
+                        <label>Title</label>
+                        <input type="text" id="txtModalEventTitle" class="form-control" style="max-width: none" />
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label>start</label>
+                        <div id="startDateTimePicker" class="input-group date">
+                            <input type="text" id="txtModalEventStart" class="form-control" style="max-width: none" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label>End</label>
+                        <div id="endDateTimePicker" class="input-group date">
+                            <input type="text" id="txtModalEventEnd" class="form-control" style="max-width: none" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label class="col-md-12">Description</label>
+                        <textarea class="col-md-12" id="txtModalEventDescription" style="max-width: none"></textarea>
+                    </div>
+                    <button type="button" id="btnEventSave" class="btn btn-success">Save</button>
+                    <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

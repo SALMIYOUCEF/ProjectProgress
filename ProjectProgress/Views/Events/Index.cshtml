@@ -1,0 +1,139 @@
+﻿@using Microsoft.Ajax.Utilities
+@model IEnumerable<ProjectProgress.Models.CustomModelEvent>
+@using ProjectProgress.Models;
+
+<style>
+    i.btn {
+        padding: 0px;
+        margin: 0px;
+    }
+</style>
+
+@Html.Partial("_ModalCreateEditEvent")
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DteStart)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DteEnd)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model) {
+        <tr style="background-color:@item.Color " id="Event-@item.Id">
+            <td id="Title-@item.Id">
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td id="DteStart-@item.Id">
+               @Html.DisplayFor(modelItem => item.DteStart)
+            </td>
+            <td id="DteEnd-@item.Id">
+                @Html.DisplayFor(modelItem => item.DteEnd)
+            </td>
+            <td id="Description-@item.Id" class="hidden">
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td id="UserId-@item.Id" class="hidden">
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td id="TaskId-@item.Id" class="hidden">
+                @Html.DisplayFor(modelItem => item.TaskId)
+            </td>
+            <td id="Color-@item.Id" class="hidden">
+                @Html.DisplayFor(modelItem => item.Color)
+            </td>
+            <td>
+                <i class="btn text-info glyphicon glyphicon-pencil" onclick="EditEventClick(@item.Id,@item.TaskId)"></i>
+                <i class="btn text-warning glyphicon glyphicon-trash" onclick="DeleteEventClick(@item.Id)"></i>
+            </td>
+        </tr>
+    }
+
+</table>
+<script src="~/Scripts/moment.min.js"></script>
+
+<script>
+    function EditEventClick(id, taskId) {
+        if (id != null) {
+            $('#modalEventId').val(id);
+            $('#modalEventUserId').val($('#UserId-' + id).text().trim());
+            $('#modalEventTaskId').val($('#TaskId-' + id).text().trim());
+            $('#txtModalEventTitle').val($('#Title-' + id).text().trim());
+            $('#txtModalEventDescription').val($('#Description-' + id).text().trim());
+            $('#txtModalEventStart').val($('#DteStart-' + id).text().trim());
+            $('#txtModalEventEnd').val($('#DteEnd-' + id).text().trim());
+            $('#modalEvenColor').val($('#Color-' + id).text().trim());
+        }
+        $('#myModalEventSave').modal('show');
+    }
+
+    $('#btnEventSave').click(function() {
+        if ($('#txtModalEventTitle').val().trim() == "") {
+            alert("Title required");
+            return;
+        }
+        var data = {
+            Id: $('#modalEventId').val(),
+            TaskId: $('#modalEventTaskId').val(),
+            UserId: $('#modalEventUserId').val(),
+            Title: $('#txtModalEventTitle').val().trim(),
+            DteStart: $('#txtModalEventStart').val().trim(),
+            DteEnd: $('#txtModalEventEnd').val().trim(),
+            Description: $('#txtModalEventDescription').val().trim(),
+            Color: $('#modalEvenColor').val().trim(),
+        }
+        
+        SaveEvent(data);
+    });
+
+    function SaveEvent(data) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Edit", "Events")',
+            data: data,
+            success: function(result) {
+                if (result.hasError) {
+                    updateEvent(data);
+                    $('#myModalEventSave').modal('hide');
+                } else {
+                    alert('failed Edit Event');
+                }
+            },
+            error: function() {
+                alert('failed Edit Event');
+            }
+        });
+    }
+
+    function updateEvent(data) {
+        $("#Event-" + data.Id).find('#Title-' + data.Id).html(data.Title);
+        $("#Event-" + data.Id).find('#DteStart-' + data.Id).html(data.DteStart);
+        $("#Event-" + data.Id).find('#DteEnd-' + data.Id).html(data.DteEnd);
+        $("#Event-" + data.Id).find('#Description-' + data.Id).html(data.Description);
+    }
+
+    function DeleteEventClick(id){
+        if (confirm('Are you sure ?')) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete", "Events")',
+                data: {'id': id},
+                success: function(data) {
+                    if (data.status) {
+                        $("#Event-" + id).remove();
+                    }
+                },
+                error: function (){
+                    alert('failed remove');
+                }
+            });
+        }
+    }
+
+</script>

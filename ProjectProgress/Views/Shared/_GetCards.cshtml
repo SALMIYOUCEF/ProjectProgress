@@ -1,308 +1,257 @@
-﻿@model List<DataAccessLayer.Cards>
-@using DataAccessLayer;
+﻿@model List<ProjectProgress.Models.CustomModelCard>
 
-@*<link rel="stylesheet" href="https//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">*@
-@*<script src="https//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"> </script>*@
-@*<script src="https//code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"> </script>*@
-@*<link href="~/Content/ProjectProgress.css" rel="stylesheet" />*@
-<body>
-    <div id="listCardDiv">
-        <div class=" panel-title">
-            <p> @ViewBag.Board.Name : list Card </p>
-        </div>
-
-        <input type="hidden" id="inputIdBoard" value=@ViewBag.Board.Id />
-
-        <div class="row">
-            <div id="AddNewCardDiv">
-                <ul class="media-list  btn btn-primary " onclick="AddNewItem('AddNewCardDiv', '/Cards/CreateCard?BoardId=@ViewBag.Board.Id')">
-                    <li><i class="glyphicon glyphicon-plus"></i></li>
-                    <li>New Card</li>
-                </ul>
-            </div>
-            <div>
-
-                @foreach (var card in Model)
-            {
-                    <div style="width: 16%; float: left">
-                        <div class="portlet">
-                            <div class="portlet-Title">
-                                <span>
-                                    @card.Title
-                                    <i class="glyphicon glyphicon-trash pull-right"></i>
-                                    <i class="glyphicon glyphicon-pencil pull-right" style="margin-right: 5px"></i>
-                                </span>
-                            </div>
-                            <div class="portlet-content">
-                                <div class="column" id="columnTask">
-                                    @foreach (var task in card.Tasks)
-                                    {
-                                        <div class="portlet" id="task-@task.Id">
-                                            <div class="dropdown portlet-header">
-                                                <span class="dropdown-toggle" data-toggle="dropdown">
-                                                    <i class="glyphicon glyphicon-cog"></i>
-                                                </span>
-                                                <span id="txtTitle-@task.Id">@task.Title</span>
-                                                <ul class="dropdown-menu">
-                                                    <li><a href="#" onclick="EditTask(@task.Id , @task.IdCard)"><i class="glyphicon glyphicon-pencil" /> Edit</a></li>
-                                                    <li><a href="#" onclick="DeleteTask(@task.Id)"><i class="glyphicon glyphicon-trash" /> Delete</a></li>
-                                                    <li><a href="#" onclick="AddEvent(@task.Id)"><i class="glyphicon glyphicon-bell"/> Event</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="portlet-content">
-                                                <textarea id="txtDescription-@task.Id"> @task.Description</textarea>
-                                            </div>
-                                        </div>
-                                    }
-                                    <div id="AddNewTaskDiv-@card.Id" class="panel-footer" style="width:100%">
-                                        <button class="btn btn-success" style="width: 100%" onclick="AddNewItem('AddNewTaskDiv-@card.Id', '/Tasks/AddTask?idCard=@card.Id')"> + New task</button>  @*AddNewTask(@card.Id)*@
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal fade" id="myModalEditSave">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <a href="#" class="close" data-dismiss="modal">&times;</a>
-                    <h3 class="modal-title">Save Task</h3>
-                </div>
-                <div class="modal-body">
-                    <form class="col-md-12 form-horizontal">
-                        <input type="hidden" vlaue="0" id="ModalCardId" />
-                        <input type="hidden" vlaue="0" id="ModalTaskId" />
-
-                        <div class="form-group col-md-12">
-                            <label>Title</label>
-                            <input type="text" id="txtModalTitle" class="form-control" style="max-width: none" />
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <label>Description</label>
-                            <textarea class="col-md-12" id="txtModalDescription" style="max-width: none"></textarea>
-                        </div>
-
-                        <button type="button" id="btnEditSave" class="btn btn-success">Save</button>
-                        <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-
-@* event Modal*@
-
-    <div class="modal fade" id="myModalEventSave">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <a href="#" class="close" data-dismiss="modal">&times;</a>
-                    <h3 class="modal-title">Add Event</h3>
-                </div>
-                <div class="modal-body">
-                    <form class="col-md-12 form-horizontal">
-                        <input type="hidden" vlaue="0" id="modalEventId" />
-                        <input type="hidden" vlaue="0" id="modalEventTaskId" />
-
-                        <div class="form-group col-md-12">
-                            <label>Title</label>
-                            <input type="text" id="txtModalEventTitle" class="form-control" style="max-width: none" />
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <label>start</label>
-                            <div id="dtp1" class="input-group date">
-                                <input type="text" id="txtModalEventStart" class="form-control" style="max-width: none" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <label>End</label>
-                            <div id="dtp2" class="input-group date">
-                                <input type="text" id="txtModalEventEnd" class="form-control" style="max-width: none" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label class="col-md-12">Description</label>
-                            <textarea class="col-md-12" id="txtModalEventDescription" style="max-width: none"></textarea>
-                        </div>
-                        <button type="button" id="btnEventSave" class="btn btn-success">Save</button>
-                        <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-</body>
-
-<script>
-
-    function AddEvent(id) {
-        var EventItem = {
-            TaskId : id,
-            Title: $('#txtTitle-' + id).text().trim(),
-            Description: $('#txtDescription-' + id).val().trim()
-        };
-        oppenAndEditFormEvent(EventItem);
-    }
-
-    function oppenAndEditFormEvent(EventItem) {
-        if (EventItem != null) {
-            $('#modalEventTaskId').val(EventItem.TaskId);
-            $('#txtModalEventTitle').val(EventItem.Title);
-            $('#txtModalEventDescription').val(EventItem.Description);
+<head>
+    <script>
+        function AddEvent(id) {
+            var EventItem = {
+                TaskId: id,
+                Title: $('#txtTitle-' + id).text().trim(),
+                Description: $('#txtDescription-' + id).val().trim()
+            };
+            oppenAndEditFormEvent(EventItem);
         }
-        $('#myModalEventSave').modal('show');
-    }
 
-    $('#btnEventSave').click(function() {
-        if ($('#txtModalEventTitle').val().trim() == "") {
-            alert("Title required");
-            return;
-        }
-        var data = {
-            TaskId: $('#modalEventTaskId').val(),
-            Title: $('#txtModalEventTitle').val().trim(),
-            DteStart: $('#txtModalEventStart').val(),
-            DteEnd: $('#txtModalEventEnd').val().trim(),
-            Description: $('#txtModalEventDescription').val().trim()
-        }
-        SaveEvent(data);
-    });
-
-    function SaveEvent(data) {
-        var linkSuccess = '@Url.Action("GetCards", "Cards", new { boardId = -1})';
-        linkSuccess = linkSuccess.replace("-1", @ViewBag.Board.Id);
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("Create", "Events")',
-            data: data,
-            success: function(data) {
-                if (data.status) {
-                    /* $("#listCardDiv").load(linkSuccess);    */
-                    $('#myModalEventSave').modal('hide');
-                } else {
-                    alert('failed Add Evenet');
-                }
-            },
-            error: function (){
-                alert('failed Add Evenet');
+        function oppenAndEditFormEvent(EventItem) {
+            if (EventItem != null) {
+                $('#modalEventTaskId').val(EventItem.TaskId);
+                $('#txtModalEventTitle').val(EventItem.Title);
+                $('#txtModalEventDescription').val(EventItem.Description);
             }
-        });
-    }
-
-
-
-    function EditTask(id, idCard) {
-        var selectedItem = {
-            Id : id,
-            IdCard: idCard,
-            Title: $('#txtTitle-' + id).text().trim(),
-            Description: $('#txtDescription-' + id).val().trim()
-        };
-        oppenAndEditForm(selectedItem);
-    }
-
-    function oppenAndEditForm(selectedItem) {
-        if (selectedItem != null) {
-            $('#ModalTaskId').val(selectedItem.Id);
-            $('#ModalCardId').val(selectedItem.IdCard);
-            $('#txtModalTitle').val(selectedItem.Title);
-            $('#txtModalDescription').val(selectedItem.Description);
+            $('#myModalEventSave').modal('show');
         }
-        $('#myModalEditSave').modal('show');
-    }
 
-    $('#btnEditSave').click(function() {
-        if ($('#txtModalTitle').val().trim() == "") {
-            alert("subject required");
-            return;
-        }
-        var data = {
-            Id: $('#ModalTaskId').val(),
-            IdCard: $('#ModalCardId').val(),
-            Title: $('#txtModalTitle').val().trim(),
-            Description: $('#txtModalDescription').val().trim()
-        }
-        SaveTask(data);
-    });
-
-    function SaveTask(data) {
-        var linkSuccess = '@Url.Action("GetCards", "Cards", new { boardId = -1})';
-        linkSuccess = linkSuccess.replace("-1", @ViewBag.Board.Id);
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("Edit", "Tasks")',
-            data: data,
-            success: function(data) {
-                if (data.status) {
-                    $("#listCardDiv").load(linkSuccess);
-                    $('#myModalEditSave').modal('hide');
-                }
-            },
-            error: function (){
-                alert('failed remove');
+        $('#btnEventSave').click(function() {
+            if ($('#txtModalEventTitle').val().trim() == "") {
+                alert("Title required");
+                return;
             }
+            var data = {
+                TaskId: $('#modalEventTaskId').val(),
+                Title: $('#txtModalEventTitle').val().trim(),
+                DteStart: $('#txtModalEventStart').val(),
+                DteEnd: $('#txtModalEventEnd').val().trim(),
+                Description: $('#txtModalEventDescription').val().trim()
+            }
+            SaveEvent(data);
         });
-    }
 
-
-    function DeleteTask(id){
-        if (confirm('Are you sure ?')) {
+        function SaveEvent(data) {
+            var linkSuccess = '@Url.Action("GetCards", "Cards", new {boardId = -1})';
+            linkSuccess = linkSuccess.replace("-1", @ViewBag.Board.Id);
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("Delete", "Tasks")',
-                data: {'id': id},
-                success: function(data) {
-                    if (data.status) {
-                        $("#task-" + id).remove();
+                url: '@Url.Action("Create", "Events")',
+                data: data,
+                success: function(result) {
+                    if (result.hasError) {
+                        /* $("#listCardDiv").load(linkSuccess);    */
+                        $('#myModalEventSave').modal('hide');
+                    } else {
+                        alert('failed Add Evenet');
                     }
                 },
-                error: function (){
+                error: function() {
+                    alert('failed Add Event');
+                }
+            });
+        }
+
+
+        function EditTask(id, idCard) {
+            var selectedItem = {
+                Id: id,
+                IdCard: idCard,
+                Title: $('#txtTitle-' + id).text().trim(),
+                Description: $('#txtDescription-' + id).val().trim()
+            };
+            oppenAndEditForm(selectedItem);
+        }
+
+        function oppenAndEditForm(selectedItem) {
+            if (selectedItem != null) {
+                $('#ModalTaskId').val(selectedItem.Id);
+                $('#ModalCardId').val(selectedItem.IdCard);
+                $('#txtModalTitle').val(selectedItem.Title);
+                $('#txtModalDescription').val(selectedItem.Description);
+            }
+            $('#myModalEditSave').modal('show');
+        }
+
+        $('#btnEditSave').click(function() {
+            if ($('#txtModalTitle').val().trim() == "") {
+                alert("subject required");
+                return;
+            }
+            var data = {
+                Id: $('#ModalTaskId').val(),
+                IdCard: $('#ModalCardId').val(),
+                Title: $('#txtModalTitle').val().trim(),
+                Description: $('#txtModalDescription').val().trim()
+            }
+            SaveTask(data);
+        });
+
+        function SaveTask(data) {
+
+            var linkSuccess = '@Url.Action("GetCards", "Cards", new {boardId = -1})';
+            linkSuccess = linkSuccess.replace("-1", @ViewBag.Board.Id);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Edit", "Tasks")',
+                data: data,
+                success: function(data) {
+                    if (data.status) {
+                        $("#listCardDiv").load(linkSuccess);
+                        $('#myModalEditSave').modal('hide');
+                    }
+                },
+                error: function() {
                     alert('failed remove');
                 }
             });
         }
-    }
 
-    $( function() {
-        $( ".column" ).sortable({
-            connectWith: ".column",
-            handle: ".portlet-header",
-            cancel: ".portlet-toggle",
-            placeholder: "portlet-placeholder ui-corner-all"
+
+        function DeleteTask(id) {
+            if (confirm('Are you sure ?')) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Delete", "Tasks")',
+                    data: { 'id': id },
+                    success: function(data) {
+                        if (data.status) {
+                            $("#task-" + id).remove();
+                        }
+                    },
+                    error: function() {
+                        alert('failed remove');
+                    }
+                });
+            }
+        }
+
+        $(function() {
+            $(".column").sortable({
+                connectWith: ".column",
+                handle: ".portlet-header",
+                cancel: ".portlet-toggle",
+                placeholder: "portlet-placeholder ui-corner-all"
+            });
+
+            $(".portlet")
+                .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+                .find(".portlet-header")
+                .addClass("ui-widget-header ui-corner-all")
+                .prepend("<span class='ui-icon ui-icon-triangle-1-n portlet-toggle'></span>");
+
+            $(".portlet-toggle").on("click",
+                function() {
+                    var icon = $(this);
+                    icon.toggleClass("  ui-icon-triangle-1-n ui-icon-triangle-1-s ");
+                    icon.closest(".portlet").find(".portlet-content").toggle();
+                });
         });
 
-        $( ".portlet" )
-            .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-            .find( ".portlet-header" )
-            .addClass( "ui-widget-header ui-corner-all" )
-            .prepend( "<span class='ui-icon ui-icon-triangle-1-n portlet-toggle'></span>");
+    </script>
+</head>
 
-        $( ".portlet-toggle" ).on( "click", function() {
-            var icon = $( this );
-            icon.toggleClass( "  ui-icon-triangle-1-n ui-icon-triangle-1-s " );
-            icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-        });
-    } );
 
-</script>
+<body>
+@* event Modal*@
+@*@Html.Partial("_ModalCreateEditEvent")*@
+
+<div id="listCardDiv">
+    <div class=" panel-title">
+        <p> @ViewBag.Board.Name : list Card </p>
+    </div>
+
+    <input type="hidden" id="inputIdBoard" value=@ViewBag.Board.Id/>
+
+    <div class="row">
+        <div id="AddNewCardDiv">
+            <ul class="media-list  btn btn-default " onclick="AddNewItem('AddNewCardDiv', '/Cards/CreateCard?BoardId=@ViewBag.Board.Id')">
+                <li><i class="glyphicon glyphicon-plus"></i></li>
+                <li>New Card</li>
+            </ul>
+        </div>
+        <div>
+
+            @foreach (var card in Model)
+            {
+                <div style="width: 16%; float: left">
+                    <div class="portlet">
+                        <div class="portlet-Title">
+                            <span>
+                                @card.Title
+                                <i class="glyphicon glyphicon-trash pull-right"></i>
+                                <i class="glyphicon glyphicon-pencil pull-right" style="margin-right: 5px"></i>
+                            </span>
+                        </div>
+                        <div class="portlet-content">
+                            <div class="column" id="columnTask">
+                                @foreach (var task in card.Tasks)
+                                {
+                                    <div class="portlet" id="task-@task.Id">
+                                        <div class="dropdown portlet-header">
+                                            <span class="dropdown-toggle" data-toggle="dropdown">
+                                                <i class="glyphicon glyphicon-cog"></i>
+                                            </span>
+                                            <span id="txtTitle-@task.Id">@task.Title</span>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#" onclick="EditTask(@task.Id, @task.IdCard)"><i class="glyphicon glyphicon-pencil"/> Edit</a></li>
+                                                <li><a href="#" onclick="DeleteTask(@task.Id)"><i class="glyphicon glyphicon-trash"/> Delete</a></li>
+                                                <li><a href="#" onclick="AddEvent(@task.Id)"><i class="glyphicon glyphicon-bell"/> Event</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="portlet-content">
+                                            <textarea id="txtDescription-@task.Id"> @task.Description</textarea>
+                                        </div>
+                                    </div>
+                                }
+                                <div id="AddNewTaskDiv-@card.Id" class="panel-footer" style="width:100%">
+                                    <button class="btn btn-success" style="width: 100%" onclick="AddNewItem('AddNewTaskDiv-@card.Id', '/Tasks/AddTask?idCard=@card.Id')"> + New task</button> @*AddNewTask(@card.Id)*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModalEditSave">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title">Save Task</h3>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" vlaue="0" id="ModalCardId"/>
+                    <input type="hidden" vlaue="0" id="ModalTaskId"/>
+
+                    <div class="form-group col-md-12">
+                        <label>Title</label>
+                        <input type="text" id="txtModalTitle" class="form-control" style="max-width: none"/>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label>Description</label>
+                        <textarea class="col-md-12" id="txtModalDescription" style="max-width: none"></textarea>
+                    </div>
+
+                    <button type="button" id="btnEditSave" class="btn btn-success">Save</button>
+                    <button class="btn btn-default pull-right" data-dismiss="modal"> Cancel </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
 <script src="~/Scripts/ProjectProgress.js"></script>
 
 

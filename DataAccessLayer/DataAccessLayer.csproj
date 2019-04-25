@@ -74,6 +74,9 @@
     <Compile Include="Event.cs">
       <DependentUpon>ProjectProgressModelDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="prGetProject_Result.cs">
+      <DependentUpon>ProjectProgressModelDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Project.cs">
       <DependentUpon>ProjectProgressModelDB.tt</DependentUpon>
     </Compile>

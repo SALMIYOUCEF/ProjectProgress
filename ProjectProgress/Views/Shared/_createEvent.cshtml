@@ -1,0 +1,95 @@
+﻿@model ProjectProgress.Models.CustomModelEvent
+
+<style>
+    TextArea {
+        width: 100%;
+        max-width: 260px;
+    }
+
+    .form-group {
+        margin-bottom: 9px;
+    }
+</style>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormCreateEvent" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DteStart, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.DteStart, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+                @Html.ValidationMessageFor(model => model.DteStart, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DteEnd, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.DteEnd, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+                @Html.ValidationMessageFor(model => model.DteEnd, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-4">Task</label>
+            <div class="col-md-8">
+                <select class="form-control " id="TaskId" name="TaskId">
+                    <option class="placeholder" selected disabled>Select Task ...</option>
+                    @foreach (var task in ViewBag.TaskList)
+                    {
+                        <option style="background-color: @task.ProjectColor" value="@task.TaskId">@task.TaskName</option>
+                    }
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-8">
+                <input type="submit" value="Create" class="btn btn-success" id="btnCreateEvent" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    $(document).ready(function() {
+        $("#btnCreateEvent").click(function() {
+            if (!$("#FormCreateEvent").valid()) {
+                return false;
+            } else {
+                var data = $("#FormCreateEvent").serialize();
+                $.ajax({
+                    type: "POST",
+                    url:  '@Url.Action("Create", "Events")', 
+                    data: data
+                });
+            }
+        });
+    });
+
+</script>
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

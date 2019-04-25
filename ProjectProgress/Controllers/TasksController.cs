@@ -17,28 +17,33 @@ namespace ProjectProgress.Controllers
         [HttpGet]
         public ActionResult AddTask(int idCard)
         {
-            var boardList = new ProgressProjectsEntities().Cards.ToList();
-            var idBoard = boardList.Where(c => c.Id == idCard).First().IdBoard;
-            ViewBag.IdBoard = idBoard; 
+            var idBoard = db.Cards.Where(c => c.Id == idCard).First().IdBoard;
+            ViewBag.IdBoard = idBoard;
             ViewBag.Id = idCard;
 
             return PartialView("_NewTask");
         }
-        
+
         [HttpPost]
-        public JsonResult AddTask(Task task)
+        public JsonResult AddTask(CustomModelTask task)
         {
             string message = "Data Not Valid";
             bool hasError = true;
             if (ModelState.IsValid)
             {
-                TasksCustomizeModel taskModel = new TasksCustomizeModel();
-                message = taskModel.AddTask(task);
-
-                if (message == "")
+                var newTask = new Task()
                 {
-                    hasError = false;
-                }
+                    Event = task.Event,
+                    Id = task.Id,
+                    Title = task.Title,
+                    Description = task.Description,
+                    Card = task.Card,
+                    IdCard = task.IdCard
+                };
+                db.Tasks.Add(newTask);
+                db.SaveChanges();
+                message = "";
+                hasError = false;
                 return Json(new { message, hasError }, JsonRequestBehavior.AllowGet);
             }
             else
@@ -65,6 +70,7 @@ namespace ProjectProgress.Controllers
             Task task = db.Tasks.Find(id);
             if (task != null)
             {
+                db.Events.RemoveRange(db.Events.Where(e=>e.TaskId == id));
                 db.Tasks.Remove(task);
                 db.SaveChanges();
                 status = true;

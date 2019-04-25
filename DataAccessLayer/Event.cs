@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.ComponentModel.DataAnnotations;
+
 namespace DataAccessLayer
 {
     using System;
@@ -21,6 +23,7 @@ namespace DataAccessLayer
         public string Description { get; set; }
         public string Title { get; set; }
         public string Color { get; set; }
+        public string UserId { get; set; }
     
         public virtual Task Task { get; set; }
     }

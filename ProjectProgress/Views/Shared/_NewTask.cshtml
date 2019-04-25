@@ -1,10 +1,6 @@
-﻿@model DataAccessLayer.Task
+﻿@model ProjectProgress.Models.CustomModelTask
 
 <head>
-    @*<link rel="stylesheet" href="https//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">*@
-    @*<script src="https//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"> </script>*@
-    @*<script src="https//code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"> </script>*@
-
     <style>
         textarea {
             width: 100%;
@@ -15,7 +11,7 @@
 <body>
     <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv" style="text-align:center;font-size:medium; width:80%"></div>
 
-    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormCreateTask" }))
     {
         @Html.AntiForgeryToken()
 
@@ -52,7 +48,8 @@
     }
 </body>
 
-
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script>
     $(document).ready(function () {
         $("#alertMessageDiv").hide();
@@ -65,10 +62,13 @@
         });
 
         $("#btnCreate").click(function() {
-            var data = $("#myForm").serialize();
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddTask", "Tasks")',
+            if (!$("#FormCreateTask").valid()) {
+                return false;
+            } else {
+                var data = $("#FormCreateTask").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddTask", "Tasks")',
                 data: data,
                 success: function(result) {
                     if (!result.hasError) {
@@ -79,6 +79,7 @@
                     }
                 }
             });
+            }
         });
     })
 

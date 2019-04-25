@@ -1,9 +1,10 @@
-﻿@model DataAccessLayer.Cards
+﻿@model ProjectProgress.Models.CustomModelCard
 
 <style>
     .btn {
         padding: 4px 6px;
     }
+
     .form-control {
         padding: 6px 2px;
     }
@@ -13,7 +14,7 @@
 
     <div class="alert-danger glyphicon glyphicon-thumbs-down" id="alertMessageDiv"></div>
 
-    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormCreateCard" }))
     {
         @Html.AntiForgeryToken()
 
@@ -26,12 +27,12 @@
                     @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-12" id="btnCreateExit">
-                        <a href="#"  class=" btn btn-success" id="btnCreate">
-                            <i class="glyphicon glyphicon-ok"></i>
-                        </a>
-                        <a href="#" class=" btn btn-default" id="btnExit">
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </a>
+                    <a href="#" class=" btn btn-success" id="btnCreate">
+                        <i class="glyphicon glyphicon-ok"></i>
+                    </a>
+                    <a href="#" class=" btn btn-default" id="btnExit">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </a>
                 </div>
             </div>
 
@@ -41,6 +42,8 @@
 
 </div>
 
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script>
     $(document).ready(function () {
         $("#alertMessageDiv").hide();
@@ -48,20 +51,23 @@
      var linkSuccess = '@Url.Action("GetCards", "Cards", new { boardId = -1})';
      linkSuccess = linkSuccess.replace("-1", @ViewBag.Id);
 
-
-     var formBoardId = document.getElementById("formBoardId");
+        var formBoardId = document.getElementById("formBoardId");
      formBoardId.value = @ViewBag.Id;
 
-      var userId = $("#hiddenId").val();
+        var userId = $("#hiddenId").val();
 
         $("#btnExit").click(function() {
             $("#listCardDiv").load(linkSuccess);
         });
+
         $("#btnCreate").click(function() {
-            var data = $("#myForm").serialize();
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("CreateCard", "Cards")',
+            if (!$("#FormCreateCard").valid()) {
+                return false;
+            } else {
+                var data = $("#FormCreateCard").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateCard", "Cards")',
                 data: data,
                 success: function(result) {
                     if (!result.hasError) {
@@ -73,6 +79,7 @@
                     }
                 }
             });
+            }
         });
 
 

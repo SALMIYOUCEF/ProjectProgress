@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DataAccessLayer.Event>
+﻿@model IEnumerable<ProjectProgress.Models.CustomModelEvent>
 @*@model IEnumerable<DataAccessLayer.Event>*@
 
 
@@ -36,7 +36,6 @@
 </head>
 
 <body>
-
 <div id='calendar'></div>
 
 <div class="modal fade" id="myModal">
@@ -65,7 +64,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="myModalSave">
+@Html.Partial("_ModalCreateEditEvent")
+
+@*<div class="modal fade" id="myModalSave">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -111,7 +112,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 
 </body>
     
@@ -193,7 +194,7 @@
                     $('#txtDescription').val(selectedEvent.description);
                 }
                 $('#myModal').modal('hide');
-                $('#myModalSave').modal();
+                $('#myModalEventSave').modal();
             }
 
             $('#btnSave').click(function() {
@@ -224,7 +225,7 @@
                     success: function(data) {
                         if (data.status) {
                             $("#calendar").load('@Url.Action("Calender", "Home")');
-                            $('#myModalSave').modal('hide');
+                            $('#myModalEventSave').modal('hide');
                         }
                     },
                     error: function (){
@@ -254,8 +255,8 @@
             });
 
             $('#dtp1 #dtp2').datetimepicker({
-                format: 'DD/MM/YYYY HH:mm A'
-            });
+               format: 'DD/MM/YYYY HH:mm A'
+           });
 
 
         });
